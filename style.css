@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.besar {
+    font-size: 50px;
+} 
+.medium {
+    font-size: 40px;
+}
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: 5%;
+} 
+.navbar {
+    position: sticky;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.nav-list {
+    display: flex;
+    list-style: none;
+}
+.nav-list li {
+    margin-right: 10%;
+}
+.nav-list li:last-child {
+    margin-right: 0px;
+}
+.nav-list li a {
+    font-size: 2vw;
+}
+.margin-details {
+    margin-top: 5%;
+}
