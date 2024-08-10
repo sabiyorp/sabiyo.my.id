@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>404 - Tidak Ditemukan</title>
-        <link rel="stylesheet" href="404.css">
-        <script src="404.js"></script>
-        <link rel="icon" type="image/x-icon" href="img/Favicon.png">
-    </head>
-    <body>
-        <h1>404, halaman tidak ditemukan.</h1>
-        <h2><span id="path"></span></h2>
-        <p>Maaf, halaman yang Anda cari tidak ditemukan. Coba cek ulang tautan yang diberikan, apakah ada salah ketik di tautan?<br>Atau kembali ke <a href="https://www.sabiyo.my.id">halaman utama (<i>www.sabiyo.my.id</i>)</a>.</p>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404: Tidak Ditemukan</title>
+    <!-- Stylesheet for custom 404 page -->
+    <link rel="stylesheet" href="css/404.css">
+    <!-- Favicon for the website -->
+    <link rel="icon" type="image/x-icon" href="img/Favicon.png">
+    <!-- JavaScript file for dynamic content -->
+    <script src="js/404.js"></script>
+</head>
+<body>
+    <!-- Main container for the 404 page content -->
+    <div class="container">
+        <!-- 404 error message -->
+        <h1><span>404</span>, <span>halaman ini tidak ditemukan.</span></h1>
+        <!-- Display the current URL path -->
+        <h2>www.sabiyo.my.id<b><span id="path"></span></b></h2>
+        <!-- Explanation and contact information -->
+        <p class="paragraph1">Tampaknya halaman yang Anda cari tidak ditemukan. Coba cek ulang tautan yang diberikan, apakah
+            ada salah ketik di tautan? <u><a href="mailto:saya@srp.my.id">Kontak</a></u> saya jika menurutmu ini adalah
+            kesalahan saya.</p>
+        <!-- Link to return to the main page -->
+        <p class="paragraph2"><a href="https://www.sabiyo.my.id">Kembali ke Halaman Utama</a></p>
+    </div>
+</body>
 </html>
