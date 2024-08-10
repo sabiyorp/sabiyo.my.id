@@ -1,16 +1,16 @@
-// Function to get the path from the URL and write it to the span with id "path"
+// Function to extract and display the current URL path in the "path" span element
 function displayPath() {
-    // Get the current URL path
+    // Retrieve the current URL path
     var path = window.location.pathname;
     
-    // Get the span element
+    // Locate the span element with id "path"
     var pathSpan = document.getElementById("path");
     
-    // Set the text content of the span to the path with www.sabiyo.my.id
+    // Update the span's text content with the current path if the element exists
     if (pathSpan) {
-        pathSpan.textContent = "www.sabiyo.my.id" + path;
+        pathSpan.textContent = path;
     }
 }
 
-// Call the function when the window loads
+// Execute the displayPath function when the window finishes loading
 window.onload = displayPath;
