@@ -1,5 +1,7 @@
+/* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
+/* Global styles */
 body {
     font-family: 'Open Sans', sans-serif;
     margin: 2%;
@@ -8,99 +10,146 @@ body {
     align-items: center;
     min-height: 100vh;
 }
+
+/* Content wrapper */
 .content-wrapper {
     max-width: 800px;
     width: 100%;
     padding: 0 20px;
 }
+
+/* Profile image */
 .imgProfile {
     float: right;
-    white-space: nowrap;
-    vertical-align: middle;
     width: 50%;
     height: auto;
 }
+
+/* Headings */
 h1 {
-    line-height: 0.5;
     font-size: 60px;
     margin-bottom: 0;
+    line-height: 0.5;
 }
+
 h2 {
     font-size: 30px;
 }
+
+/* About section title */
 .titleAbout {
-    margin-top: 30%;
+    margin-top: 10%;
     font-size: 30px;
     text-align: center;
     font-weight: bold;
     background-color: rgb(47, 165, 181);
     box-shadow: 0 15px rgb(255, 149, 0);
-    color: rgb(255, 255, 255);
+    color: white;
     padding: 10px;
-    box-sizing: border-box;
     border-radius: 18px;
 }
+
+/* About section details */
 .detailsAbout {
-    padding-left: 0;
-    padding-right: 0;
     text-indent: 10%;
     text-align: justify;
 }
+
+/* Link styles */
 a {
-    margin-right: 20px;
+    margin-right: 25px;
 }
+
 a:last-child {
     margin-right: 0;
 }
+
+/* Social media icons container */
 .imgSocial {
-    white-space: nowrap;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
 }
+
+/* Social media icon links */
 .imgSocial a {
-    display: inline-block;
-    vertical-align: middle;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-right: 20px;
+    border-radius: 20px;
+    background-color: rgb(240, 240, 240);
+    box-shadow: 0 10px 0px rgb(217, 217, 217);
+    height: 50px;
+    width: 140px;
 }
+
+.imgSocial a:last-of-type {
+    margin-right: 0;
+}
+
+.imgSocial a img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.imgSocial a:hover {
+    filter: grayscale(100%);
+    transition: 500ms;
+}
+
+/* Media queries for responsive design */
 @media screen and (max-width: 768px) {
     .imgProfile {
         float: none;
         display: block;
         margin: 10% auto 5%;
-        max-width: 300px;
+        max-width: 500px;
         width: 100%;
-        height: auto;
     }
+
     .content-wrapper {
         display: flex;
         flex-direction: column;
     }
+
     .image-container {
         order: -1;
         text-align: center;
         margin-bottom: 10px;
     }
+
     h1 {
         font-size: 58px;
         text-align: center;
         margin-top: 5px;
     }
+
     h2 {
         font-size: 30px;
         text-align: center;
     }
+
     .imgSocial {
+        justify-content: center;
+    }
+
+    .centerIMG a,
+    .imgSocial a {
         text-align: center;
+        margin-right: 0px;
     }
 }
+
 @media screen and (max-width: 375px) {
     .imgProfile {
-        float: none;
-        display: block;
         margin: 2% auto 5%;
         max-width: 100%;
-        height: auto;
     }
-    .imgSocial {
-        text-align: center;
-    }
+
     .imgSocial img {
         width: 25vw;
         max-width: 100px;
@@ -108,17 +157,18 @@ a:last-child {
         height: auto;
         margin: 0 3px;
     }
-    .imgSocial a {
-        display: inline-block;
-        margin-right: 5px;
-    }
-    .imgSocial a:last-child {
-        margin-right: 0;
-    }
 }
+
+/* Small screen adjustments */
 @media screen and (max-width: 470px) {
     .srpSmall {
         font-size: 0.7em;
         font-weight: bolder;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    .srpSmall {
+        font-size: 0.6em;
     }
 }
