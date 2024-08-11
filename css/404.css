@@ -117,3 +117,10 @@ a:hover, u:hover {
     h1 { font-size: 1.8rem; }
     .paragraph1, .paragraph2, .paragraph2 a { font-size: 0.8rem; }
 }
+
+/* Hide content for extremely small screens */
+@media screen and (max-width: 236px) {
+    body {
+        display: none;
+    }
+}
