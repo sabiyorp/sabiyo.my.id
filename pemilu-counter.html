@@ -10,12 +10,55 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        #candidate-container {
+            margin-bottom: 20px;
         }
         .candidate {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
             margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .candidate span {
+            font-weight: bold;
         }
         .candidate button {
             margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .candidate button:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
         }
     </style>
 </head>
@@ -26,9 +69,6 @@
     <button onclick="setupCandidates()">Buat Paslon</button>
     <button onclick="generatePDF()">Print to PDF</button>
     <button onclick="clearAll()">Hapus Semua</button>
-
-    <h2>Hasil Suara</h2>
-    <div id="result-container"></div>
 
     <script>
         const candidates = [];
@@ -44,9 +84,11 @@
                 div.className = 'candidate';
                 div.innerHTML = `
                     <span>Paslon ${i}: <span id="votes-${i}">0</span> suara</span>
-                    <button onclick="incrementVote(${i})">+</button>
-                    <button onclick="decrementVote(${i})">-</button>
-                    <button onclick="clearCandidate(${i})">Hapus Semua Suara Paslon ${i}</button>
+                    <div>
+                        <button onclick="incrementVote(${i})">+</button>
+                        <button onclick="decrementVote(${i})">-</button>
+                        <button onclick="clearCandidate(${i})">Hapus Semua Suara</button>
+                    </div>
                 `;
                 container.appendChild(div);
                 candidates.push(0); // Initialize votes for each candidate
@@ -55,37 +97,32 @@
 
         function incrementVote(candidateNumber) {
             candidates[candidateNumber - 1]++;
-            updateResults();
+            updateCandidateVotes(candidateNumber);
         }
 
         function decrementVote(candidateNumber) {
             if (candidates[candidateNumber - 1] > 0) {
                 candidates[candidateNumber - 1]--;
             }
-            updateResults();
+            updateCandidateVotes(candidateNumber);
         }
 
-        function updateResults() {
-            const resultContainer = document.getElementById('result-container');
-            let resultsHtml = '';
-            candidates.forEach((votes, index) => {
-                resultsHtml += `Paslon ${index + 1}: ${votes} suara<br>`;
-            });
-            resultContainer.innerHTML = resultsHtml;
+        function updateCandidateVotes(candidateNumber) {
+            const votesElement = document.getElementById(`votes-${candidateNumber}`);
+            votesElement.innerText = candidates[candidateNumber - 1];
         }
 
         function clearAll() {
             if (confirm("Apakah Anda yakin ingin menghapus semua entri?")) {
                 candidates.length = 0; // Clear all candidates
                 document.getElementById('candidate-container').innerHTML = '';
-                document.getElementById('result-container').innerHTML = '';
             }
         }
 
         function clearCandidate(candidateNumber) {
             if (confirm(`Apakah Anda yakin ingin menghapus semua suara dari Paslon ${candidateNumber}?`)) {
                 candidates[candidateNumber - 1] = 0; // Clear votes for the specified candidate
-                updateResults();
+                updateCandidateVotes(candidateNumber);
             }
         }
 
