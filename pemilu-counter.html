@@ -1,9 +1,66 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Pemilu Counter App</title>
-    </head>
-    <body>
-        <h1>Pemilu Counter App</h1>
-    </body>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemilu Counter App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .candidate {
+            margin: 10px 0;
+        }
+        .candidate button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pemilu Counter App</h1>
+    <div id="candidate-container"></div>
+    <input type="number" id="candidate-count" placeholder="Jumlah Paslon" min="1">
+    <button onclick="setupCandidates()">Buat Paslon</button>
+
+    <h2>Hasil Suara</h2>
+    <div id="result-container"></div>
+
+    <script>
+        function setupCandidates() {
+            const container = document.getElementById('candidate-container');
+            container.innerHTML = ''; // Clear previous candidates
+
+            const count = document.getElementById('candidate-count').value;
+            for (let i = 1; i <= count; i++) {
+                const div = document.createElement('div');
+                div.className = 'candidate';
+                div.innerHTML = `
+                    <span>Paslon ${i}: <span id="votes-${i}">0</span> suara</span>
+                    <button onclick="incrementVote(${i})">Tambah Suara</button>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function incrementVote(candidateNumber) {
+            const votesElement = document.getElementById(`votes-${candidateNumber}`);
+            let currentVotes = parseInt(votesElement.innerText);
+            currentVotes++;
+            votesElement.innerText = currentVotes;
+            updateResults();
+        }
+
+        function updateResults() {
+            const resultContainer = document.getElementById('result-container');
+            const candidates = document.querySelectorAll('.candidate');
+            let resultsHtml = '';
+            candidates.forEach((candidate, index) => {
+                const votes = document.getElementById(`votes-${index + 1}`).innerText;
+                resultsHtml += `Paslon ${index + 1}: ${votes} suara<br>`;
+            });
+            resultContainer.innerHTML = resultsHtml;
+        }
+    </script>
+</body>
 </html>
