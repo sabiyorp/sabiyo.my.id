@@ -15,75 +15,84 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            height: 100vh; /* Full viewport height */
+            padding: 20px;
+            overflow: hidden; /* Prevent scroll */
         }
         .container {
-            width: 90%;
-            max-width: 800px;
+            width: 100%;
+            max-width: 800px; /* Adjusted for better screen utilization */
+            max-height: 90vh; /* Set maximum height */
             background-color: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
+            overflow-y: auto; /* Allow vertical scroll if needed */
         }
         .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
         .header img {
-            width: 100px;
-            height: 100px;
-            margin: 0 10px;
+            width: 120px; /* Increased image size */
+            height: auto;
         }
         #candidates {
             display: flex;
-            justify-content: space-evenly;
-            margin-top: 20px;
+            justify-content: space-around;
+            flex-wrap: wrap; /* Allow wrapping for responsiveness */
+            margin-top: 10px;
         }
         .candidate {
             border: 1px solid #000;
-            padding: 30px;
-            width: 200px;
+            padding: 10px;
+            width: calc(45% - 20px); /* Two candidates per row */
+            margin: 10px; /* Added margin for spacing */
             text-align: center;
             font-size: 1.2em;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .image-box {
-            width: 120px;
-            height: 120px;
+            width: 100%;
+            max-width: 220px; /* Maintain aspect ratio */
+            height: 220px; /* Fixed height */
             background-color: #ccc;
-            margin: 10px auto;
+            margin: 5px auto;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .candidate h2 {
-            font-size: 1.5em;
+            font-size: 2em;
+            margin: 10px 0;
         }
         .candidate div span {
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
         }
-        #controls {
-            margin-top: 20px;
-        }
-        button {
-            margin: 5px;
+        /* Hint box styling */
+        .hint-box {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #000;
             padding: 10px;
-            border: none;
             border-radius: 5px;
-            background-color: #28a745;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        h1 {
-            margin-right: 5%;
-            margin-left: 5%;
+            display: none; /* Hidden by default */
+            z-index: 1000; /* Ensure it is above other elements */
         }
     </style>
 </head>
@@ -99,35 +108,51 @@
             <div class="candidate">
                 <h2>01</h2>
                 <div class="image-box">
-                    <img id="https://www.sabiyo.my.id/pemilu/img/alfath-logo.png" src="" alt="Foto Paslon" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="placeholder-1">Foto Paslon</span>
+                    <img id="image-1" src="Paslon 01.png" alt="Foto Paslon">
                 </div>
                 <div><span id="votes-1">0</span> Suara</div>
             </div>
             <div class="candidate">
                 <h2>02</h2>
                 <div class="image-box">
-                    <img id="https://www.sabiyo.my.id/pemilu/img/osis-logo.png" src="" alt="Foto Paslon" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                    <span id="placeholder-2">Foto Paslon</span>
+                    <img id="image-2" src="Paslon 2.png" alt="Foto Paslon">
                 </div>
                 <div><span id="votes-2">0</span> Suara</div>
             </div>
         </div>
 
-        <div class="candidate" style="margin: 20px auto; width: 300px;">
+        <div class="candidate" style="margin: 20px auto; width: calc(45% - 20px);">
             <h2>Abstain</h2>
             <div><span id="abstain-votes">0</span> Suara</div>
         </div>
-        <div id="controls">
-            <button onclick="generatePDF()">Print to PDF</button>
-            <button onclick="clearAll()">Hapus Semua</button>
-        </div>
+    </div>
+
+    <div class="hint-box" id="hint-box">
+        <h3>Kontrol dengan Keyboard</h3>
+        <ul>
+            <li><strong>1:</strong> Tambah Suara Paslon 01</li>
+            <li><strong>2:</strong> Tambah Suara Paslon 02</li>
+            <li><strong>A:</strong> Tambah Suara Abstain</li>
+            <li><strong>Shift + 1</strong> Kurangi Suara Paslon 01</li>
+            <li><strong>Shift + 2:</strong> Kurangi Suara Paslon 02</li>
+            <li><strong>Shift + A:</strong> Kurangi Suara Abstain</li>
+            <li><strong>P:</strong> Cetak ke PDF</li>
+            <li><strong>/:</strong> Hapus Semua Suara</li>
+            <li><strong>H:</strong> Tampilkan/Sembunyikan Hint</li>
+        </ul>
+        <button onclick="closeHint()">Tutup</button>
     </div>
 
     <script>
         const candidates = [0, 0];
         let abstainVotes = 0;
-
+        const hintBox = document.getElementById("hint-box");
+    
+        document.addEventListener("DOMContentLoaded", () => {
+            // Show hint box when the page loads
+            hintBox.style.display = "block";
+        });
+    
         document.addEventListener("keydown", (event) => {
             if (event.key === "!") {
                 decrementVote(1);
@@ -146,46 +171,51 @@
                     case "a":
                         incrementAbstain();
                         break;
-                    case "r":
-                    case "R":
+                    case "p": // Print to PDF
+                        generatePDF();
+                        break;
+                    case "/": // Clear all votes
                         clearAll();
+                        break;
+                    case "h": // Toggle hint box
+                        toggleHint();
                         break;
                 }
             }
         });
-
+    
         function incrementVote(candidateNumber) {
             candidates[candidateNumber - 1]++;
             updateCandidateVotes(candidateNumber);
         }
-
+    
         function decrementVote(candidateNumber) {
             if (candidates[candidateNumber - 1] > 0) {
                 candidates[candidateNumber - 1]--;
             }
             updateCandidateVotes(candidateNumber);
         }
-
+    
         function incrementAbstain() {
             abstainVotes++;
             updateAbstainVotes();
         }
-
+    
         function decrementAbstain() {
             if (abstainVotes > 0) {
                 abstainVotes--;
             }
             updateAbstainVotes();
         }
-
+    
         function updateCandidateVotes(candidateNumber) {
             document.getElementById(`votes-${candidateNumber}`).innerText = candidates[candidateNumber - 1];
         }
-
+    
         function updateAbstainVotes() {
             document.getElementById("abstain-votes").innerText = abstainVotes;
         }
-
+    
         function clearAll() {
             if (confirm("Apakah Anda yakin ingin menghapus semua entri?")) {
                 candidates.fill(0);
@@ -195,7 +225,7 @@
                 updateAbstainVotes();
             }
         }
-
+    
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -205,30 +235,19 @@
                 ["Paslon 02", candidates[1]],
                 ["Abstain", abstainVotes],
             ];
-
+    
             doc.autoTable(tableColumn, tableRows, { startY: 20 });
             doc.text("Hasil Suara Pemilu OSIS", 14, 15);
             doc.save("hasil_suara.pdf");
         }
-
-        function uploadImage(candidateNumber) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = () => {
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const image = document.getElementById(`image-${candidateNumber}`);
-                    const placeholder = document.getElementById(`placeholder-${candidateNumber}`);
-                    image.src = reader.result;
-                    image.style.display = 'block';
-                    placeholder.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            };
-            input.click();
+    
+        function toggleHint() {
+            hintBox.style.display = hintBox.style.display === "none" || hintBox.style.display === "" ? "block" : "none";
         }
-    </script>
+    
+        function closeHint() {
+            hintBox.style.display = "none";
+        }
+    </script>    
 </body>
 </html>
