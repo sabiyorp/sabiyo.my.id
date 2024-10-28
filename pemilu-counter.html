@@ -46,6 +46,7 @@
                     <span>Paslon ${i}: <span id="votes-${i}">0</span> suara</span>
                     <button onclick="incrementVote(${i})">+</button>
                     <button onclick="decrementVote(${i})">-</button>
+                    <button onclick="clearCandidate(${i})">Hapus Semua Suara Paslon ${i}</button>
                 `;
                 container.appendChild(div);
                 candidates.push(0); // Initialize votes for each candidate
@@ -78,6 +79,13 @@
                 candidates.length = 0; // Clear all candidates
                 document.getElementById('candidate-container').innerHTML = '';
                 document.getElementById('result-container').innerHTML = '';
+            }
+        }
+
+        function clearCandidate(candidateNumber) {
+            if (confirm(`Apakah Anda yakin ingin menghapus semua suara dari Paslon ${candidateNumber}?`)) {
+                candidates[candidateNumber - 1] = 0; // Clear votes for the specified candidate
+                updateResults();
             }
         }
 
