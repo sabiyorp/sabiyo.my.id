@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemilu Counter App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,14 +24,19 @@
     <div id="candidate-container"></div>
     <input type="number" id="candidate-count" placeholder="Jumlah Paslon" min="1">
     <button onclick="setupCandidates()">Buat Paslon</button>
+    <button onclick="generatePDF()">Print to PDF</button>
+    <button onclick="clearAll()">Hapus Semua</button>
 
     <h2>Hasil Suara</h2>
     <div id="result-container"></div>
 
     <script>
+        const candidates = [];
+
         function setupCandidates() {
             const container = document.getElementById('candidate-container');
             container.innerHTML = ''; // Clear previous candidates
+            candidates.length = 0; // Reset candidates array
 
             const count = document.getElementById('candidate-count').value;
             for (let i = 1; i <= count; i++) {
@@ -37,29 +44,57 @@
                 div.className = 'candidate';
                 div.innerHTML = `
                     <span>Paslon ${i}: <span id="votes-${i}">0</span> suara</span>
-                    <button onclick="incrementVote(${i})">Tambah Suara</button>
+                    <button onclick="incrementVote(${i})">+</button>
+                    <button onclick="decrementVote(${i})">-</button>
                 `;
                 container.appendChild(div);
+                candidates.push(0); // Initialize votes for each candidate
             }
         }
 
         function incrementVote(candidateNumber) {
-            const votesElement = document.getElementById(`votes-${candidateNumber}`);
-            let currentVotes = parseInt(votesElement.innerText);
-            currentVotes++;
-            votesElement.innerText = currentVotes;
+            candidates[candidateNumber - 1]++;
+            updateResults();
+        }
+
+        function decrementVote(candidateNumber) {
+            if (candidates[candidateNumber - 1] > 0) {
+                candidates[candidateNumber - 1]--;
+            }
             updateResults();
         }
 
         function updateResults() {
             const resultContainer = document.getElementById('result-container');
-            const candidates = document.querySelectorAll('.candidate');
             let resultsHtml = '';
-            candidates.forEach((candidate, index) => {
-                const votes = document.getElementById(`votes-${index + 1}`).innerText;
+            candidates.forEach((votes, index) => {
                 resultsHtml += `Paslon ${index + 1}: ${votes} suara<br>`;
             });
             resultContainer.innerHTML = resultsHtml;
+        }
+
+        function clearAll() {
+            if (confirm("Apakah Anda yakin ingin menghapus semua entri?")) {
+                candidates.length = 0; // Clear all candidates
+                document.getElementById('candidate-container').innerHTML = '';
+                document.getElementById('result-container').innerHTML = '';
+            }
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const tableColumn = ["Paslon", "Suara"];
+            const tableRows = [];
+
+            candidates.forEach((votes, index) => {
+                const entryData = [`Paslon ${index + 1}`, votes];
+                tableRows.push(entryData);
+            });
+
+            doc.autoTable(tableColumn, tableRows, { startY: 20 });
+            doc.text("Hasil Suara Pemilu", 14, 15);
+            doc.save("hasil_suara.pdf");
         }
     </script>
 </body>
