@@ -82,6 +82,13 @@
             font-size: 2em;
             font-weight: bold;
         }
+        /* Warning message styling */
+        .warning {
+            text-align: center;
+            font-size: 1.5em;
+            color: red;
+            padding: 20px;
+        }
         /* Hint box styling */
         .hint-box {
             position: fixed;
@@ -97,7 +104,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="main-content">
         <div class="header">
             <img src="https://www.sabiyo.my.id/pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
             <h1>Rekapitulasi Suara<br>Pemilu OSIS 2024</h1>
@@ -127,6 +134,10 @@
         </div>
     </div>
 
+    <div class="warning" id="warning-message" style="display: none;">
+        <p>Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar lebih dari 606 px.</p>
+    </div>
+
     <div class="hint-box" id="hint-box">
         <h3>Kontrol dengan Keyboard</h3>
         <ul>
@@ -144,6 +155,34 @@
     </div>
 
     <script>
+        // Function to check the screen size
+        function checkScreenSize() {
+            const warningMessage = document.getElementById("warning-message");
+            const mainContent = document.getElementById("main-content");
+
+            if (window.innerWidth < 607) {
+                mainContent.style.display = "none"; // Hide the main content
+                warningMessage.style.display = "block"; // Show the warning message
+            } else {
+                mainContent.style.display = "block"; // Show the main content
+                warningMessage.style.display = "none"; // Hide the warning message
+            }
+        }
+
+        // Initial check
+        checkScreenSize();
+
+        // Add event listener for resizing
+        window.addEventListener("resize", checkScreenSize);
+
+        // Check if JavaScript is enabled
+        document.documentElement.classList.remove("no-js");
+
+        // Hide content for unsupported devices (like some mobile phones)
+        if (!window.navigator.userAgent.includes("Mozilla")) {
+            document.body.innerHTML = ""; // Clear body if not supported
+        }
+
         const candidates = [0, 0];
         let abstainVotes = 0;
         const hintBox = document.getElementById("hint-box");
@@ -192,8 +231,8 @@
         function decrementVote(candidateNumber) {
             if (candidates[candidateNumber - 1] > 0) {
                 candidates[candidateNumber - 1]--;
+                updateCandidateVotes(candidateNumber);
             }
-            updateCandidateVotes(candidateNumber);
         }
     
         function incrementAbstain() {
@@ -204,26 +243,24 @@
         function decrementAbstain() {
             if (abstainVotes > 0) {
                 abstainVotes--;
+                updateAbstainVotes();
             }
-            updateAbstainVotes();
         }
     
         function updateCandidateVotes(candidateNumber) {
-            document.getElementById(`votes-${candidateNumber}`).innerText = candidates[candidateNumber - 1];
+            document.getElementById(`votes-${candidateNumber}`).textContent = candidates[candidateNumber - 1];
         }
     
         function updateAbstainVotes() {
-            document.getElementById("abstain-votes").innerText = abstainVotes;
+            document.getElementById("abstain-votes").textContent = abstainVotes;
         }
     
         function clearAll() {
-            if (confirm("Apakah Anda yakin ingin menghapus semua entri?")) {
-                candidates.fill(0);
-                abstainVotes = 0;
-                updateCandidateVotes(1);
-                updateCandidateVotes(2);
-                updateAbstainVotes();
-            }
+            candidates = [0, 0];
+            abstainVotes = 0;
+            updateCandidateVotes(1);
+            updateCandidateVotes(2);
+            updateAbstainVotes();
         }
     
         function generatePDF() {
