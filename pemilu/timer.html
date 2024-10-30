@@ -10,9 +10,8 @@
 </head>
 
 <body>
-    <div class="warning" id="warning-message" style="display: none;">
-        <p>Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar lebih dari 606 px.</p>
-    </div>
+
+    <div class="warning" id="warning-message">Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar lebih dari 879 px.</div>
     <div class="container" id="main-content">
         <div class="header">
             <img class="header-image" src="https://www.sabiyo.my.id/pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
@@ -67,34 +66,6 @@
         let timers = [null, null];
         let seconds = [0, 0];
         let isPaused = [true, true];
-
-        // Function to check the screen size
-        function checkScreenSize() {
-            const warningMessage = document.getElementById("warning-message");
-            const mainContent = document.getElementById("main-content");
-
-            if (window.innerWidth < 880) {
-                mainContent.style.display = "none"; // Hide the main content
-                warningMessage.style.display = "block"; // Show the warning message
-            } else {
-                mainContent.style.display = "block"; // Show the main content
-                warningMessage.style.display = "none"; // Hide the warning message
-            }
-        }
-
-        // Initial check
-        checkScreenSize();
-
-        // Add event listener for resizing
-        window.addEventListener("resize", checkScreenSize);
-
-        // Check if JavaScript is enabled
-        document.documentElement.classList.remove("no-js");
-
-        // Hide content for unsupported devices (like some mobile phones)
-        if (!window.navigator.userAgent.includes("Mozilla")) {
-            document.body.innerHTML = ""; // Clear body if not supported
-        }
 
         function startOrResumeTimer(paslon) {
             if (timers[paslon - 1] !== null) {
@@ -172,6 +143,20 @@
             keyboardHint.style.display = "none";
             document.getElementById("controls-1").style.display = "none";
             document.getElementById("controls-2").style.display = "none";
+        }
+
+        // Responsive warning
+        function checkScreenWidth() {
+            const warningMessage = document.getElementById("warning-message");
+            const mainContent = document.getElementById("main-content");
+
+            if (window.innerWidth < 880) {
+                mainContent.style.display = "none"; // Hide the main content
+                warningMessage.style.display = "block"; // Show the warning message
+            } else {
+                mainContent.style.display = "block"; // Show the main content
+                warningMessage.style.display = "none"; // Hide the warning message
+            }
         }
 
         window.addEventListener('resize', checkScreenWidth);
