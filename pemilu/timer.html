@@ -10,6 +10,9 @@
 </head>
 
 <body>
+    <div class="warning" id="warning-message" style="display: none;">
+        <p>Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar lebih dari 606 px.</p>
+    </div>
     <div class="container" id="main-content">
         <div class="header">
             <img class="header-image" src="https://www.sabiyo.my.id/pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
@@ -58,9 +61,6 @@
                 <li><strong>h</strong>: Tampilkan/sembunyikan kontrol keyboard dan pengaturan waktu</li>
             </ul>
         </div>
-        <div class="warning" id="warning-message" style="display: none;">
-            Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar lebih dari 606 px.
-        </div>
     </div>
 
     <script>
@@ -73,7 +73,7 @@
             const warningMessage = document.getElementById("warning-message");
             const mainContent = document.getElementById("main-content");
 
-            if (window.innerWidth < 741) {
+            if (window.innerWidth < 880) {
                 mainContent.style.display = "none"; // Hide the main content
                 warningMessage.style.display = "block"; // Show the warning message
             } else {

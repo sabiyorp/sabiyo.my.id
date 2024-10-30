@@ -157,12 +157,11 @@ body {
     font-weight: bold;
     text-align: center;
     font-size: 1.5em;
-    padding: 20px;
+    padding: 80px;
+    padding-left: 20px;
+    padding-right: 20px;
     position: fixed; /* Use fixed position to overlay on the screen */
     top: 50%; /* Center vertically */
     left: 50%; /* Center horizontally */
     transform: translate(-50%, -50%); /* Adjust to truly center the element */
-    background-color: rgba(255, 255, 255, 0.9); /* Optional: semi-transparent background */
-    border-radius: 10px; /* Optional: rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional: shadow for depth */
 }
