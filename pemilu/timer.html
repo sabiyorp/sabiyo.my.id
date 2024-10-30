@@ -10,11 +10,10 @@
 </head>
 
 <body>
-    <div class="warning" id="warning-message" style="display: none;">
-        <p>Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar
-            lebih dari 606 px.</p>
-    </div>
     <div class="container" id="main-content">
+        <div class="warning" id="warning-message" style="display: none;">
+            <p>Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap gunakan perangkat dengan lebar layar lebih dari 606 px.</p>
+        </div>
         <div class="header">
             <img class="header-image" src="https://www.sabiyo.my.id/pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
             <h1>Debat Pemilu OSIS 2024</h1>
@@ -76,7 +75,7 @@
             const warningMessage = document.getElementById("warning-message");
             const mainContent = document.getElementById("main-content");
 
-            if (window.innerWidth < 607) {
+            if (window.innerWidth < 741) {
                 mainContent.style.display = "none"; // Hide the main content
                 warningMessage.style.display = "block"; // Show the warning message
             } else {
