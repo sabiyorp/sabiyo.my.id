@@ -7,7 +7,7 @@ body {
     justify-content: center;
     height: 100vh;
     padding: 20px;
-    overflow: hidden;
+    overflow: hidden; /* Keep this to prevent body scroll */
     position: relative;
 }
 
@@ -19,7 +19,8 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     text-align: center;
-    overflow-y: auto;
+    overflow-y: auto; /* Allow the container to scroll */
+    max-height: calc(100vh - 100px); /* Adjust the height to allow room for keyboard hint */
 }
 
 #candidates {
@@ -30,7 +31,6 @@ body {
 }
 
 .candidate {
-    border: 1px solid #ccc;
     padding: 10px;
     width: calc(45% - 20px);
     margin: 10px;
@@ -38,7 +38,30 @@ body {
     font-size: 1.2em;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    background-color: #fafafa;
+    color: white; /* Default text color for better readability */
+}
+
+/* Styles for candidate 01 */
+.candidate-01 {
+    background-color: #ff4d4d; /* Red background for candidate 01 */
+}
+
+/* Styles for candidate 02 */
+.candidate-02 {
+    background-color: #007bff; /* Blue background for candidate 02 */
+}
+
+/* Timer display styles */
+.timer-display {
+    font-size: 2em;
+    font-weight: bold;
+    color: white; /* Ensure timer text is also white */
+    margin-top: 10px;
+    padding: 10px;
+    border: 2px solid #ffffff; /* Change border color to white */
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: semi-transparent background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .image-box {
@@ -68,18 +91,6 @@ body {
     font-size: 1.2em;
 }
 
-.timer-display {
-    font-size: 2em;
-    font-weight: bold;
-    color: #333;
-    margin-top: 10px;
-    padding: 10px;
-    border: 2px solid #007BFF;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
 .controls {
     margin-top: 10px;
     display: flex; /* Ensures the inputs are aligned in a row */
@@ -106,7 +117,6 @@ body {
     max-height: 200px; /* Set a maximum height for scrolling */
     overflow-y: auto; /* Enable vertical scrolling */
 }
-
 
 .close-btn {
     position: absolute;
@@ -154,12 +164,10 @@ body {
 .warning {
     display: none; /* Initially hidden */
     color: red;
-    font-weight: lighter;
+    font-weight: normal;
     text-align: center;
     font-size: 1.5em;
     padding: 80px;
-    padding-left: 20px;
-    padding-right: 20px;
     position: fixed; /* Use fixed position to overlay on the screen */
     top: 50%; /* Center vertically */
     left: 50%; /* Center horizontally */
