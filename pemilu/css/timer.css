@@ -145,7 +145,15 @@ body {
     color: #333; /* You can change the color */
     margin: 0; /* Remove default margin */
 }
+
 .candidate h2 {
     font-size: 2em; /* Increase the font size */
     margin: 0; /* Remove margin for better alignment */
+}
+
+.warning {
+    text-align: center;
+    font-size: 1.5em;
+    color: red;
+    padding: 20px;
 }
