@@ -15,20 +15,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
             padding: 20px;
-            overflow: hidden; /* Prevent scroll */
+            overflow: hidden;
         }
         .container {
             width: 100%;
-            max-width: 800px; /* Adjusted for better screen utilization */
-            max-height: 90vh; /* Set maximum height */
+            max-width: 800px;
+            max-height: 90vh;
             background-color: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
-            overflow-y: auto; /* Allow vertical scroll if needed */
+            overflow-y: auto;
         }
         .header {
             display: flex;
@@ -37,29 +37,35 @@
             margin-bottom: 20px;
         }
         .header img {
-            width: 120px; /* Increased image size */
+            width: 120px;
             height: auto;
         }
         #candidates {
             display: flex;
             justify-content: space-around;
-            flex-wrap: wrap; /* Allow wrapping for responsiveness */
+            flex-wrap: wrap;
             margin-top: 10px;
         }
         .candidate {
             border: 1px solid #000;
             padding: 10px;
-            width: calc(45% - 20px); /* Two candidates per row */
-            margin: 10px; /* Added margin for spacing */
+            width: calc(45% - 20px);
+            margin: 10px;
             text-align: center;
             font-size: 1.2em;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+        .candidate-01 {
+            background-color: #ff4d4d; /* Red for Candidate 1 */
+        }
+        .candidate-02 {
+            background-color: #007bff; /* Blue for Candidate 2 */
+        }
         .image-box {
             width: 100%;
-            max-width: 220px; /* Maintain aspect ratio */
-            height: 220px; /* Fixed height */
+            max-width: 220px;
+            height: 220px;
             background-color: #ccc;
             margin: 5px auto;
             display: flex;
@@ -82,14 +88,12 @@
             font-size: 2em;
             font-weight: bold;
         }
-        /* Warning message styling */
         .warning {
             text-align: center;
             font-size: 1.5em;
             color: red;
             padding: 20px;
         }
-        /* Hint box styling */
         .hint-box {
             position: fixed;
             bottom: 20px;
@@ -98,8 +102,8 @@
             border: 1px solid #000;
             padding: 10px;
             border-radius: 5px;
-            display: none; /* Hidden by default */
-            z-index: 1000; /* Ensure it is above other elements */
+            display: none;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -112,17 +116,17 @@
         </div>
 
         <div id="candidates">
-            <div class="candidate">
-                <h2>01</h2>
+            <div class="candidate candidate-01">
+                <h2>1</h2>
                 <div class="image-box">
-                    <img id="image-1" src="https://www.sabiyo.my.id/pemilu/img/FotoPaslon01.png" alt="Foto Paslon">
+                    <img id="image-1" src="https://www.sabiyo.my.id/pemilu/img/FotoAN01New.png" alt="Foto Paslon 1">
                 </div>
                 <div><span id="votes-1">0</span> Suara</div>
             </div>
-            <div class="candidate">
-                <h2>02</h2>
+            <div class="candidate candidate-02">
+                <h2>2</h2>
                 <div class="image-box">
-                    <img id="image-2" src="https://www.sabiyo.my.id/pemilu/img/FotoPaslon02.png" alt="Foto Paslon">
+                    <img id="image-2" src="https://www.sabiyo.my.id/pemilu/img/FotoAD02New.png" alt="Foto Paslon 2">
                 </div>
                 <div><span id="votes-2">0</span> Suara</div>
             </div>
@@ -155,43 +159,36 @@
     </div>
 
     <script>
-        // Function to check the screen size
         function checkScreenSize() {
             const warningMessage = document.getElementById("warning-message");
             const mainContent = document.getElementById("main-content");
 
             if (window.innerWidth < 607) {
-                mainContent.style.display = "none"; // Hide the main content
-                warningMessage.style.display = "block"; // Show the warning message
+                mainContent.style.display = "none";
+                warningMessage.style.display = "block";
             } else {
-                mainContent.style.display = "block"; // Show the main content
-                warningMessage.style.display = "none"; // Hide the warning message
+                mainContent.style.display = "block";
+                warningMessage.style.display = "none";
             }
         }
 
-        // Initial check
         checkScreenSize();
-
-        // Add event listener for resizing
         window.addEventListener("resize", checkScreenSize);
 
-        // Check if JavaScript is enabled
         document.documentElement.classList.remove("no-js");
 
-        // Hide content for unsupported devices (like some mobile phones)
         if (!window.navigator.userAgent.includes("Mozilla")) {
-            document.body.innerHTML = ""; // Clear body if not supported
+            document.body.innerHTML = "";
         }
 
-        const candidates = [0, 0];
+        let candidates = [0, 0];
         let abstainVotes = 0;
         const hintBox = document.getElementById("hint-box");
-    
+
         document.addEventListener("DOMContentLoaded", () => {
-            // Show hint box when the page loads
             hintBox.style.display = "block";
         });
-    
+
         document.addEventListener("keydown", (event) => {
             if (event.key === "!") {
                 decrementVote(1);
@@ -210,51 +207,51 @@
                     case "a":
                         incrementAbstain();
                         break;
-                    case "p": // Print to PDF
+                    case "p":
                         generatePDF();
                         break;
-                    case "/": // Clear all votes
+                    case "/":
                         clearAll();
                         break;
-                    case "h": // Toggle hint box
+                    case "h":
                         toggleHint();
                         break;
                 }
             }
         });
-    
+
         function incrementVote(candidateNumber) {
             candidates[candidateNumber - 1]++;
             updateCandidateVotes(candidateNumber);
         }
-    
+
         function decrementVote(candidateNumber) {
             if (candidates[candidateNumber - 1] > 0) {
                 candidates[candidateNumber - 1]--;
                 updateCandidateVotes(candidateNumber);
             }
         }
-    
+
         function incrementAbstain() {
             abstainVotes++;
             updateAbstainVotes();
         }
-    
+
         function decrementAbstain() {
             if (abstainVotes > 0) {
                 abstainVotes--;
                 updateAbstainVotes();
             }
         }
-    
+
         function updateCandidateVotes(candidateNumber) {
             document.getElementById(`votes-${candidateNumber}`).textContent = candidates[candidateNumber - 1];
         }
-    
+
         function updateAbstainVotes() {
             document.getElementById("abstain-votes").textContent = abstainVotes;
         }
-    
+
         function clearAll() {
             candidates = [0, 0];
             abstainVotes = 0;
@@ -262,29 +259,32 @@
             updateCandidateVotes(2);
             updateAbstainVotes();
         }
-    
+
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const tableColumn = ["Paslon", "Suara"];
-            const tableRows = [
-                ["Paslon 01", candidates[0]],
-                ["Paslon 02", candidates[1]],
-                ["Abstain", abstainVotes],
-            ];
-    
-            doc.autoTable(tableColumn, tableRows, { startY: 20 });
-            doc.text("Hasil Suara Pemilu OSIS", 14, 15);
-            doc.save("hasil_suara.pdf");
+
+            doc.text("Rekapitulasi Suara Pemilu OSIS 2024", 14, 15);
+            doc.autoTable({
+                startY: 20,
+                head: [["Calon", "Suara"]],
+                body: [
+                    ["Paslon 01", candidates[0]],
+                    ["Paslon 02", candidates[1]],
+                    ["Abstain", abstainVotes],
+                ],
+            });
+
+            doc.save("Rekapitulasi_Suara.pdf");
         }
-    
+
         function toggleHint() {
-            hintBox.style.display = hintBox.style.display === "none" || hintBox.style.display === "" ? "block" : "none";
+            hintBox.style.display = hintBox.style.display === "none" ? "block" : "none";
         }
-    
+
         function closeHint() {
             hintBox.style.display = "none";
         }
-    </script>    
+    </script>
 </body>
 </html>
