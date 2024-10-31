@@ -9,6 +9,11 @@ body {
     padding: 20px;
     overflow: hidden; /* Keep this to prevent body scroll */
     position: relative;
+    background-image: url('https://www.sabiyo.my.id/pemilu/img/AFOSISBG.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .container {
