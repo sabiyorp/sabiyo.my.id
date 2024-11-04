@@ -32,7 +32,7 @@
             max-height: 90vh;
             background-color: white;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
             overflow-y: auto;
@@ -58,14 +58,15 @@
         }
 
         .candidate {
-            border: 1px solid #000;
+            position: relative;
+            /* Allows positioning of child elements */
             padding: 10px;
             width: calc(45% - 20px);
             margin: 10px;
             text-align: center;
             font-size: 1.2em;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(124, 124, 124, 0.6);
         }
 
         .candidate-01 {
@@ -78,6 +79,41 @@
             color: white;
         }
 
+        .circle {
+            width: 80px;
+            /* Adjust size as needed */
+            height: 80px;
+            /* Adjust size as needed */
+            border-radius: 50%;
+            /* Makes it circular */
+            position: absolute;
+            /* Position it relative to the candidate box */
+            top: -40px;
+            /* Move it up above the candidate box */
+            left: 50%;
+            /* Center it horizontally */
+            transform: translateX(-50%);
+            /* Centering correction */
+            color: white;
+            /* Text color inside the circle */
+            font-size: 1.2em;
+            /* Adjust font size as needed */
+            text-align: center;
+            /* Center text in the circle */
+            z-index: 0;
+            /* Ensure it is below the candidate box */
+        }
+
+        .candidate-01 .circle {
+            background-color: #ff4d4d;
+            /* Slightly transparent color for Candidate 1 */
+        }
+
+        .candidate-02 .circle {
+            background-color: #007bff;
+            /* Slightly transparent color for Candidate 2 */
+        }
+
         .image-box {
             width: 100%;
             max-width: 220px;
@@ -88,14 +124,19 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 20px;
             overflow: hidden;
+            position: relative;
+            /* Ensure the image box is the positioning context for absolute children */
+            z-index: 1;
+            /* Keep the image box above the circle */
         }
 
         .image-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            /* Ensures the image covers the box without distortion */
         }
 
         .candidate h2 {
@@ -126,6 +167,51 @@
             display: none;
             z-index: 1000;
         }
+
+        /* Fullscreen blinking red overlay */
+        #error-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ff1a1a;
+            /* bright red */
+            color: white;
+            z-index: 9999;
+            text-align: center;
+            font-size: 5em;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: redBlink 1s infinite;
+        }
+
+        #error-overlay img {
+            max-width: 300px;
+            margin-bottom: 10px;
+        }
+
+        /* Blinking red background animation */
+        @keyframes redBlink {
+            0% {
+                background-color: #bc1122;
+                /* darker red */
+            }
+
+            50% {
+                background-color: #ff1a1a;
+                /* bright red */
+            }
+
+            100% {
+                background-color: #bc1122;
+                /* darker red */
+            }
+        }
     </style>
 </head>
 
@@ -139,14 +225,18 @@
 
         <div id="candidates">
             <div class="candidate candidate-01">
-                <h2>1</h2>
+                <div class="circle">
+                    <h2>1</h2>
+                </div>
                 <div class="image-box">
                     <img id="image-1" src="https://www.sabiyo.my.id/pemilu/img/FotoAN01New.png" alt="Foto Paslon 1">
                 </div>
                 <div><span id="votes-1">0</span> Suara</div>
             </div>
             <div class="candidate candidate-02">
-                <h2>2</h2>
+                <div class="circle">
+                    <h2>2</h2>
+                </div>
                 <div class="image-box">
                     <img id="image-2" src="https://www.sabiyo.my.id/pemilu/img/FotoAD02New.png" alt="Foto Paslon 2">
                 </div>
@@ -181,7 +271,16 @@
         <button onclick="closeHint()">Tutup</button>
     </div>
 
+    <!-- Fullscreen Warning Overlay -->
+    <div id="error-overlay">
+        <img src="https://www.sabiyo.my.id/pemilu/img/WhiteStop.png" alt="STOP!">
+        <p>Sedang Menyinkronkan!</p>
+    </div>
+
     <script>
+        const { jsPDF } = window.jspdf; // Import jsPDF
+
+        // Check screen size and toggle warning message
         function checkScreenSize() {
             const warningMessage = document.getElementById("warning-message");
             const mainContent = document.getElementById("main-content");
@@ -198,12 +297,7 @@
         checkScreenSize();
         window.addEventListener("resize", checkScreenSize);
 
-        document.documentElement.classList.remove("no-js");
-
-        if (!window.navigator.userAgent.includes("Mozilla")) {
-            document.body.innerHTML = "";
-        }
-
+        // Initialize votes and hint box
         let candidates = [0, 0];
         let abstainVotes = 0;
         const hintBox = document.getElementById("hint-box");
@@ -212,103 +306,95 @@
             hintBox.style.display = "block";
         });
 
+        // Keyboard event listener
         document.addEventListener("keydown", (event) => {
-            if (event.key === "!") {
-                decrementVote(1);
-            } else if (event.key === "@") {
-                decrementVote(2);
-            } else if (event.key === "A" && event.shiftKey) {
-                decrementAbstain();
-            } else {
-                switch (event.key) {
-                    case "1":
-                        incrementVote(1);
-                        break;
-                    case "2":
-                        incrementVote(2);
-                        break;
-                    case "a":
-                        incrementAbstain();
-                        break;
-                    case "p":
-                        generatePDF();
-                        break;
-                    case "/":
-                        clearAll();
-                        break;
-                    case "h":
-                        toggleHint();
-                        break;
-                }
+            const key = event.key;
+
+            // Toggle error overlay with "\"
+            if (key === "\\") {
+                toggleErrorOverlay();
+                return; // Exit after handling the toggle
+            }
+
+            // Handle votes
+            if (key === "1") {
+                candidates[0] += 1; // Increment vote for candidate 1
+                document.getElementById("votes-1").textContent = candidates[0];
+            } else if (key === "2") {
+                candidates[1] += 1; // Increment vote for candidate 2
+                document.getElementById("votes-2").textContent = candidates[1];
+            } else if (key === "a") {
+                abstainVotes += 1; // Increment abstain votes
+                document.getElementById("abstain-votes").textContent = abstainVotes;
+            } else if (key === "h") {
+                hintBox.style.display = hintBox.style.display === "none" ? "block" : "none";
+            } else if (key === "/") {
+                // Reset votes without confirmation
+                candidates = [0, 0];
+                abstainVotes = 0;
+                document.getElementById("votes-1").textContent = 0;
+                document.getElementById("votes-2").textContent = 0;
+                document.getElementById("abstain-votes").textContent = 0;
+            }
+
+            // Decrement votes
+            if (key === "!") {
+                candidates[0] = Math.max(candidates[0] - 1, 0); // Decrement vote for candidate 1
+                document.getElementById("votes-1").textContent = candidates[0];
+            } else if (key === "@") {
+                candidates[1] = Math.max(candidates[1] - 1, 0); // Decrement vote for candidate 2
+                document.getElementById("votes-2").textContent = candidates[1];
+            } else if (key === "A") {
+                abstainVotes = Math.max(abstainVotes - 1, 0); // Decrement abstain votes
+                document.getElementById("abstain-votes").textContent = abstainVotes;
+            }
+
+            // Print to PDF when "p" is pressed
+            if (key === "p") {
+                printToPDF();
             }
         });
-
-        function incrementVote(candidateNumber) {
-            candidates[candidateNumber - 1]++;
-            updateCandidateVotes(candidateNumber);
-        }
-
-        function decrementVote(candidateNumber) {
-            if (candidates[candidateNumber - 1] > 0) {
-                candidates[candidateNumber - 1]--;
-                updateCandidateVotes(candidateNumber);
-            }
-        }
-
-        function incrementAbstain() {
-            abstainVotes++;
-            updateAbstainVotes();
-        }
-
-        function decrementAbstain() {
-            if (abstainVotes > 0) {
-                abstainVotes--;
-                updateAbstainVotes();
-            }
-        }
-
-        function updateCandidateVotes(candidateNumber) {
-            document.getElementById(`votes-${candidateNumber}`).textContent = candidates[candidateNumber - 1];
-        }
-
-        function updateAbstainVotes() {
-            document.getElementById("abstain-votes").textContent = abstainVotes;
-        }
-
-        function clearAll() {
-            candidates = [0, 0];
-            abstainVotes = 0;
-            updateCandidateVotes(1);
-            updateCandidateVotes(2);
-            updateAbstainVotes();
-        }
-
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.text("Rekapitulasi Suara Pemilu OSIS 2024", 14, 15);
-            doc.autoTable({
-                startY: 20,
-                head: [["Calon", "Suara"]],
-                body: [
-                    ["Paslon 01", candidates[0]],
-                    ["Paslon 02", candidates[1]],
-                    ["Abstain", abstainVotes],
-                ],
-            });
-
-            doc.save("Rekapitulasi_Suara.pdf");
-        }
-
-        function toggleHint() {
-            hintBox.style.display = hintBox.style.display === "none" ? "block" : "none";
-        }
 
         function closeHint() {
             hintBox.style.display = "none";
         }
+
+        // Toggle error overlay display
+        function toggleErrorOverlay() {
+            const overlay = document.getElementById("error-overlay");
+            overlay.style.display = overlay.style.display === "none" || overlay.style.display === "" ? "flex" : "none";
+        }
+
+        // Print results to PDF
+        function printToPDF() {
+            const doc = new jsPDF();
+
+            // Set monospace font
+            doc.setFont("courier"); // Use a monospace font
+
+            // Add centered title
+            const title = "Hasil Suara Pemilu OSIS 2024";
+            const titleWidth = doc.getTextWidth(title);
+            const x = (doc.internal.pageSize.width - titleWidth) / 2; // Center the title
+            doc.text(title, x, 20);
+
+            // Add table header
+            doc.text("Paslon / Keterangan", 20, 40);
+            doc.text("Jumlah Suara", 120, 40);
+
+            // Add results in table format
+            doc.text("Paslon 1 (Abby-Naazneen)", 20, 50);
+            doc.text(`${candidates[0]}`, 120, 50);
+            doc.text("Paslon 2 (Airin-Dzakwan)", 20, 60);
+            doc.text(`${candidates[1]}`, 120, 60);
+            doc.text("Suara Abstain/Tidak Sah", 20, 70);
+            doc.text(`${abstainVotes}`, 120, 70);
+
+            // Save the PDF
+            doc.save("Hasil_Suara_Pemilu_OSIS_2024.pdf");
+        }
     </script>
+
 </body>
 
 </html>
