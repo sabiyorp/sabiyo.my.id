@@ -4,20 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="https://www.sabiyo.my.id/img/Favicon.png">
-    <link rel="stylesheet" href="https://www.sabiyo.my.id/pemilu/css/timer.css">
+    <link rel="icon" type="image/x-icon" href="../img/Favicon.png">
+    <link rel="stylesheet" href="css/timer.css">
     <title>Timer Debat</title>
 </head>
 
 <body>
-
+    <div id="error-overlay">
+        <img src="img/WhiteStop.png" alt="Stop!">
+        <p>Harap Tenang</p>
+    </div>
     <div class="warning" id="warning-message">Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap
         gunakan perangkat dengan lebar layar lebih dari 879 px.</div>
     <div class="container" id="main-content">
         <div class="header">
-            <img class="header-image" src="https://www.sabiyo.my.id/pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
+            <img class="header-image" src="img/alfath-logo.png" alt="Logo Al-Fath">
             <h1>Debat Pemilu OSIS 2024</h1>
-            <img class="header-image" src="https://www.sabiyo.my.id/pemilu/img/osis-logo.png" alt="Logo OSIS">
+            <img class="header-image" src="img/osis-logo.png" alt="Logo OSIS">
         </div>
 
         <div id="candidates">
@@ -25,10 +28,10 @@
                 <h2>1</h2>
                 <div class="timer-display" id="timer-1">00:00</div>
                 <div class="image-box">
-                    <img id="image-1" src="https://www.sabiyo.my.id/pemilu/img/FotoAN01New.png" alt="Foto Paslon">
+                    <img id="image-1" src="img/FotoAN01New.png" alt="Foto Paslon">
                 </div>
                 <div class="controls" id="controls-1">
-                    <input type="number" id="input-time-1" placeholder="Menit" min="0">:
+                    <input type="number" id="input-time-1" placeholder="Menit" min="0">
                     <input type="number" id="input-second-1" placeholder="Detik" min="0" max="59">
                 </div>
             </div>
@@ -36,77 +39,89 @@
                 <h2>2</h2>
                 <div class="timer-display" id="timer-2">00:00</div>
                 <div class="image-box">
-                    <img id="image-2" src="https://www.sabiyo.my.id/pemilu/img/FotoAD02New.png" alt="Foto Paslon">
+                    <img id="image-2" src="img/FotoAD02New.png" alt="Foto Paslon">
                 </div>
                 <div class="controls" id="controls-2">
-                    <input type="number" id="input-time-2" placeholder="Menit" min="0">:
+                    <input type="number" id="input-time-2" placeholder="Menit" min="0">
                     <input type="number" id="input-second-2" placeholder="Detik" min="0" max="59">
                 </div>
             </div>
         </div>
-
-        <div class="keyboard-hint" id="keyboard-hint">
-            <button class="close-btn" onclick="toggleControls()">✖</button>
-            <strong>Kontrol dengan Keyboard:</strong>
-            <ul>
-                <li><strong>q</strong>: Mulai timer dari nol untuk paslon 1</li>
-                <li><strong>w</strong>: Mulai timer dari nol untuk paslon 2</li>
-                <li><strong>, (koma)</strong>: Mulai timer dari nol untuk kedua paslon</li>
-                <li><strong>1 (satu)</strong>: Pause/Resume timer paslon 1</li>
-                <li><strong>2 (dua)</strong>: Pause/Resume timer paslon 2</li>
-                <li><strong>- (minus)</strong>: Reset timer paslon 1</li>
-                <li><strong>= (sama dengan)</strong>: Reset timer paslon 2</li>
-                <li><strong>Spasi</strong>: Pause/Resume kedua timer</li>
-                <li><strong>. (titik)</strong>: Reset kedua timer</li>
-                <li><strong>h</strong>: Tampilkan/sembunyikan kontrol keyboard dan pengaturan waktu</li>
-            </ul>
-        </div>
+    </div>
+    <div class="hint-box" id="hint-box">
+        <strong>Kontrol dengan Keyboard:</strong>
+        <ul>
+            <li><strong>Q</strong>: Mulai timer dari nol untuk paslon 1</li>
+            <li><strong>W</strong>: Mulai timer dari nol untuk paslon 2</li>
+            <li><strong>, (koma)</strong>: Mulai timer dari nol untuk<br>kedua paslon</li>
+            <li><strong>1 (satu)</strong>: Pause/Resume timer paslon 1</li>
+            <li><strong>2 (dua)</strong>: Pause/Resume timer paslon 2</li>
+            <li><strong>- (minus)</strong>: Reset timer paslon 1</li>
+            <li><strong>= (sama dengan)</strong>: Reset timer paslon 2</li>
+            <li><strong>Spasi</strong>: Pause/Resume kedua timer</li>
+            <li><strong>. (titik)</strong>: Reset kedua timer</li>
+            <li><strong>L</strong>: Tampilkan/sembunyikan pengaturan waktu</li>
+            <li><strong>H</strong>: Tampilkan/sembunyikan kontrol keyboard</li>
+        </ul>
+        <button onclick="toggleHintBox()">Tutup</button>
     </div>
     <script>
         let timers = [null, null];
         let seconds = [0, 0];
         let isPaused = [true, true];
-    
+        const hintBox = document.getElementById("hint-box");
+        const tickSound = new Audio("sound/tick.mp3");
+        const beepSound = new Audio("sound/ring.mp3");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            toggleControls();
+            hintBox.style.display = "block";
+            hintBox.style.opacity = 0;
+            setTimeout(() => {
+                hintBox.style.opacity = 1;
+            }, 10);
+        });
+
         function startOrResumeTimer(paslon) {
             if (timers[paslon - 1] !== null) {
-                // Jika timer sudah berjalan, maka di-pause
                 pauseTimer(paslon);
             } else {
-                // Jika timer sedang berhenti, lanjutkan atau mulai dari awal
-                startTimer(paslon, false); // Parameter false berarti resume jika sudah berjalan
+                startTimer(paslon, false);
             }
         }
-    
+
         function startTimer(paslon, reset = true) {
-            // Jika reset diatur ke true, timer akan dimulai dari awal
             if (reset) {
                 const inputMinutes = parseInt(document.getElementById(`input-time-${paslon}`).value) || 0;
                 const inputSeconds = parseInt(document.getElementById(`input-second-${paslon}`).value) || 0;
                 seconds[paslon - 1] = inputMinutes * 60 + inputSeconds;
             }
-            if (seconds[paslon - 1] <= 0) return; // Cegah timer jika waktu <= 0
-            if (timers[paslon - 1] !== null) return; // Cegah timer jika sudah berjalan
+            if (seconds[paslon - 1] <= 0) return;
+            if (timers[paslon - 1] !== null) return;
+
             timers[paslon - 1] = setInterval(() => {
                 if (seconds[paslon - 1] > 0) {
                     seconds[paslon - 1]--;
                     document.getElementById(`timer-${paslon}`).textContent = formatTime(seconds[paslon - 1]);
-                    document.getElementById("tick-sound").play();
+                    if (seconds[paslon - 1] <= 8 && seconds[paslon - 1] > 0) {
+                        tickSound.play();
+                    }
                 } else {
                     clearInterval(timers[paslon - 1]);
                     timers[paslon - 1] = null;
                     document.getElementById(`timer-${paslon}`).textContent = "00:00";
-                    document.getElementById("beep-sound").play();
+                    beepSound.play();
                 }
             }, 1000);
         }
-    
+
         function pauseTimer(paslon) {
             if (!timers[paslon - 1]) return;
             clearInterval(timers[paslon - 1]);
             timers[paslon - 1] = null;
             isPaused[paslon - 1] = true;
         }
-    
+
         function resetTimer(paslon) {
             clearInterval(timers[paslon - 1]);
             timers[paslon - 1] = null;
@@ -114,89 +129,111 @@
             isPaused[paslon - 1] = true;
             document.getElementById(`timer-${paslon}`).textContent = "00:00";
         }
-    
+
         function resetBothTimers() {
             resetTimer(1);
             resetTimer(2);
         }
-    
+
         function formatTime(totalSeconds) {
             const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
             const secs = String(totalSeconds % 60).padStart(2, '0');
             return `${minutes}:${secs}`;
         }
-    
+
         function toggleControls() {
             const controls1 = document.getElementById("controls-1");
             const controls2 = document.getElementById("controls-2");
-            const keyboardHint = document.getElementById("keyboard-hint");
             const isVisible = controls1.style.display === "block";
             controls1.style.display = isVisible ? "none" : "block";
             controls2.style.display = isVisible ? "none" : "block";
-            keyboardHint.style.display = isVisible ? "none" : "block";
         }
-    
-        function closeHint() {
-            const keyboardHint = document.getElementById("keyboard-hint");
-            keyboardHint.style.display = "none";
-            document.getElementById("controls-1").style.display = "none";
-            document.getElementById("controls-2").style.display = "none";
+
+        function toggleHintBox() {
+            if (hintBox.style.display === "none" || !hintBox.style.display) {
+                hintBox.style.display = "block";
+                setTimeout(() => {
+                    hintBox.style.opacity = 1;
+                }, 10);
+            } else {
+                hintBox.style.opacity = 0;
+                setTimeout(() => {
+                    hintBox.style.display = "none";
+                }, 500);
+            }
         }
-    
-        // Responsive warning
+
         function checkScreenWidth() {
             const warningMessage = document.getElementById("warning-message");
             const mainContent = document.getElementById("main-content");
             if (window.innerWidth < 880) {
-                mainContent.style.display = "none"; // Hide the main content
-                warningMessage.style.display = "block"; // Show the warning message
+                mainContent.style.display = "none";
+                warningMessage.style.display = "block";
             } else {
-                mainContent.style.display = "block"; // Show the main content
-                warningMessage.style.display = "none"; // Hide the warning message
+                mainContent.style.display = "block";
+                warningMessage.style.display = "none";
             }
         }
-    
+
         window.addEventListener('resize', checkScreenWidth);
         checkScreenWidth();
-    
+
         document.addEventListener("keydown", (event) => {
-            switch (event.key) {
+            const key = event.key;
+            if (key === "\\") {
+                toggleErrorOverlay();
+                return;
+            }
+            switch (key) {
+                case "h":
+                    toggleHintBox();
+                    break;
+                case "l":
+                    toggleControls();
+                    break;
                 case "1":
-                    startOrResumeTimer(1); // Mulai atau resume timer paslon 1
+                    startOrResumeTimer(1);
                     break;
                 case "2":
-                    startOrResumeTimer(2); // Mulai atau resume timer paslon 2
+                    startOrResumeTimer(2);
                     break;
                 case " ":
                     startOrResumeTimer(1);
-                    startOrResumeTimer(2); // Mulai atau resume kedua timer
+                    startOrResumeTimer(2);
                     break;
                 case "q":
-                    startTimer(1, true); // Mulai dari awal untuk paslon 1
+                    startTimer(1, true);
                     break;
                 case "w":
-                    startTimer(2, true); // Mulai dari awal untuk paslon 2
+                    startTimer(2, true);
                     break;
                 case ",":
                     startTimer(1, true);
-                    startTimer(2, true); // Mulai dari awal untuk kedua paslon
+                    startTimer(2, true);
                     break;
                 case "-":
-                    resetTimer(1); // Reset timer paslon 1
+                    resetTimer(1);
                     break;
                 case "=":
-                    resetTimer(2); // Reset timer paslon 2
+                    resetTimer(2);
                     break;
                 case ".":
-                    resetBothTimers(); // Reset kedua timer
-                    break;
-                case "h":
-                    toggleControls();
-                    break;
-                default:
+                    resetBothTimers();
                     break;
             }
         });
+
+        function toggleErrorOverlay() {
+            const errorOverlay = document.getElementById("error-overlay");
+            if (errorOverlay.style.display === "none" || !errorOverlay.style.display) {
+                errorOverlay.style.display = "flex";
+                setTimeout(() => errorOverlay.style.opacity = "1", 50);
+            } else {
+                errorOverlay.style.opacity = "0";
+                setTimeout(() => errorOverlay.style.display = "none", 300);
+            }
+        }
     </script>
 </body>
+
 </html>
