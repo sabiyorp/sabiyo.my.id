@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../img/Favicon.png">
+    <link rel="stylesheet" href="css/timer.css">
+    <title>Timer Debat</title>
+</head>
+
+<body>
+    <div id="error-overlay">
+        <img src="../pemilu/img/WhiteStop.png" alt="Stop!">
+        <p>Harap Tenang</p>
+    </div>
+    <div class="warning" id="warning-message">Peringatan: Layar Anda terlalu kecil untuk menampilkan konten ini. Harap
+        gunakan perangkat dengan lebar layar lebih dari 879 px.</div>
+    <div class="container" id="main-content">
+        <div class="header">
+            <img class="header-image" src="../pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
+            <h1>Timer Regu</h1>
+            <img class="header-image" src="../pemiluimg/osis-logo.png" alt="Logo OSIS">
+        </div>
+
+        <div id="candidates">
+            <!-- Candidate 1 -->
+            <div class="candidate candidate-01">
+                <h2>1</h2>
+                <div class="timer-display" id="timer-1">00:00</div>
+                <div class="controls" id="controls-1">
+                    <input type="number" id="input-time-1" placeholder="Menit" min="0">
+                    <input type="number" id="input-second-1" placeholder="Detik" min="0" max="59">
+                    <button onclick="startTimer(1, true)">Mulai (Q)</button>
+                    <button onclick="startOrResumeTimer(1)">Pause/Resume (A)</button>
+                    <button onclick="resetTimer(1)">Reset (Z)</button>
+                </div>
+            </div>
+            <!-- Candidate 2 -->
+            <div class="candidate candidate-02">
+                <h2>2</h2>
+                <div class="timer-display" id="timer-2">00:00</div>
+                <div class="controls" id="controls-2">
+                    <input type="number" id="input-time-2" placeholder="Menit" min="0">
+                    <input type="number" id="input-second-2" placeholder="Detik" min="0" max="59">
+                    <button onclick="startTimer(2, true)">Mulai (W)</button>
+                    <button onclick="startOrResumeTimer(2)">Pause/Resume (S)</button>
+                    <button onclick="resetTimer(2)">Reset (X)</button>
+                </div>
+            </div>
+            <!-- Candidate 3 -->
+            <div class="candidate candidate-03">
+                <h2>3</h2>
+                <div class="timer-display" id="timer-3">00:00</div>
+                <div class="controls" id="controls-3">
+                    <input type="number" id="input-time-3" placeholder="Menit" min="0">
+                    <input type="number" id="input-second-3" placeholder="Detik" min="0" max="59">
+                    <button onclick="startTimer(3, true)">Mulai (E)</button>
+                    <button onclick="startOrResumeTimer(3)">Pause/Resume (D)</button>
+                    <button onclick="resetTimer(3)">Reset (C)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="global-controls">
+            <button onclick="startAllTimers()">Mulai Semua (Koma)</button>
+            <button onclick="resetAllTimers()">Reset Semua (Titik)</button>
+            <button onclick="for (let i = 1; i <= 3; i++) startOrResumeTimer(i);">Pause/Resume Semua (Spasi)</button>
+            <button onclick="toggleErrorOverlay();">Tampilkan "Harap Tenang" (\)</button>
+            <button onclick="toggleControls();">Sembunyikan Kontrol (L)</button>
+        </div>
+    </div>
+    <div class="hint-box" id="hint-box">
+        <strong>Panduan Kontrol dengan Keyboard:</strong>
+        <ul>
+            <li><strong>Q</strong>: Mulai timer dari nol untuk regu 1</li>
+            <li><strong>W</strong>: Mulai timer dari nol untuk regu 2</li>
+            <li><strong>E</strong>: Mulai timer dari nol untuk regu 3</li>
+            <li><strong>A</strong>: Pause/Resume timer regu 1</li>
+            <li><strong>S</strong>: Pause/Resume timer regu 2</li>
+            <li><strong>D</strong>: Pause/Resume timer regu 3</li>
+            <li><strong>Z</strong>: Reset timer regu 1</li>
+            <li><strong>X</strong>: Reset timer regu 2</li>
+            <li><strong>C</strong>: Reset timer regu 3</li>
+            <li><strong>, (Koma)</strong>: Mulai semua timer regu</li>
+            <li><strong>Spasi</strong>: Pause/Resume semua timer</li>
+            <li><strong>. (Titik)</strong>: Pause/Resume semua timer regu</li>
+            <li><strong>\</strong>: Tampilkan/sembunyikan pesan "Harap Tenang"</li>
+            <li><strong>L</strong>: Tampilkan/sembunyikan kontrol timer</li>
+            <li><strong>H</strong>: Tampilkan/sembunyikan panduan kontrol keyboard</li>
+        </ul>
+        <button onclick="toggleHintBox()">Tutup (Tekan H)</button>
+    </div>
+
+    <script>
+        let timers = [null, null, null];
+        let seconds = [0, 0, 0];
+        let isPaused = [true, true, true];
+        const hintBox = document.getElementById("hint-box");
+        const tickSound = new Audio("../pemilu/sound/tick.mp3");
+        const beepSound = new Audio("../pemilu/sound/ring.mp3");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            toggleControls();
+            hintBox.style.display = "block";
+            hintBox.style.opacity = 0;
+            setTimeout(() => {
+                hintBox.style.opacity = 1;
+            }, 10);
+        });
+
+        function startOrResumeTimer(paslon) {
+            if (timers[paslon - 1] !== null) {
+                pauseTimer(paslon);
+            } else {
+                startTimer(paslon, false);
+            }
+        }
+
+        function startTimer(paslon, reset = true) {
+            if (reset) {
+                const inputMinutes = parseInt(document.getElementById(`input-time-${paslon}`).value) || 0;
+                const inputSeconds = parseInt(document.getElementById(`input-second-${paslon}`).value) || 0;
+                seconds[paslon - 1] = inputMinutes * 60 + inputSeconds;
+            }
+            if (seconds[paslon - 1] <= 0) return;
+            if (timers[paslon - 1] !== null) return;
+
+            timers[paslon - 1] = setInterval(() => {
+                if (seconds[paslon - 1] > 0) {
+                    seconds[paslon - 1]--;
+                    document.getElementById(`timer-${paslon}`).textContent = formatTime(seconds[paslon - 1]);
+                    if (seconds[paslon - 1] <= 8 && seconds[paslon - 1] > 0) {
+                        tickSound.play();
+                    }
+                } else {
+                    clearInterval(timers[paslon - 1]);
+                    timers[paslon - 1] = null;
+                    document.getElementById(`timer-${paslon}`).textContent = "00:00";
+                    beepSound.play();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer(paslon) {
+            if (!timers[paslon - 1]) return;
+            clearInterval(timers[paslon - 1]);
+            timers[paslon - 1] = null;
+            isPaused[paslon - 1] = true;
+        }
+
+        function resetTimer(paslon) {
+            clearInterval(timers[paslon - 1]);
+            timers[paslon - 1] = null;
+            seconds[paslon - 1] = 0;
+            isPaused[paslon - 1] = true;
+            document.getElementById(`timer-${paslon}`).textContent = "00:00";
+        }
+
+        function formatTime(totalSeconds) {
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const secs = String(totalSeconds % 60).padStart(2, '0');
+            return `${minutes}:${secs}`;
+        }
+
+        function startAllTimers() {
+            for (let i = 1; i <= 3; i++) {
+                startTimer(1, true);
+                startTimer(2, true);
+                startTimer(3, true);
+            }
+        }
+
+        function resetAllTimers() {
+            for (let i = 1; i <= 3; i++) {
+                resetTimer(i);
+            }
+        }
+
+        function toggleControls() {
+            for (let i = 1; i <= 3; i++) {
+                const controls = document.getElementById(`controls-${i}`);
+                const isVisible = controls.style.display === "block";
+                controls.style.display = isVisible ? "none" : "block";
+            }
+
+            // Ambil elemen global-controls
+            const globalControls = document.querySelector(".global-controls");
+            const isGlobalVisible = globalControls.style.display === "block";
+
+            // Tampilkan atau sembunyikan elemen global-controls
+            globalControls.style.display = isGlobalVisible ? "none" : "block";
+        }
+
+        function toggleHintBox() {
+            if (hintBox.style.display === "none" || !hintBox.style.display) {
+                hintBox.style.display = "block";
+                setTimeout(() => {
+                    hintBox.style.opacity = 1;
+                }, 10);
+            } else {
+                hintBox.style.opacity = 0;
+                setTimeout(() => {
+                    hintBox.style.display = "none";
+                }, 500);
+            }
+        }
+
+        document.addEventListener("keydown", (event) => {
+            const key = event.key.toLowerCase();
+            switch (key) {
+                case "a":
+                    startOrResumeTimer(1);
+                    break;
+                case "s":
+                    startOrResumeTimer(2);
+                    break;
+                case "d":
+                    startOrResumeTimer(3);
+                    break;
+                case "q":
+                    startTimer(1, true);
+                    break;
+                case "w":
+                    startTimer(2, true);
+                    break;
+                case "e":
+                    startTimer(3, true);
+                    break;
+                case "z":
+                    resetTimer(1);
+                    break;
+                case "x":
+                    resetTimer(2);
+                    break;
+                case "c":
+                    resetTimer(3);
+                    break;
+                case " ":
+                    for (let i = 1; i <= 3; i++) startOrResumeTimer(i);
+                    break;
+                case "h":
+                    toggleHintBox();
+                    break;
+                case ",":
+                    startTimer(1, true);
+                    startTimer(2, true);
+                    startTimer(3, true);
+                    break;
+                case ".":
+                    resetAllTimers();
+                    break;
+                case "l":
+                    toggleControls();
+                    break;
+                case "\\":
+                    toggleErrorOverlay();
+                    break;
+            }
+        });
+        function toggleErrorOverlay() {
+            const errorOverlay = document.getElementById("error-overlay");
+            if (errorOverlay.style.display === "none" || !errorOverlay.style.display) {
+                errorOverlay.style.display = "flex";
+                setTimeout(() => errorOverlay.style.opacity = "1", 50);
+            } else {
+                errorOverlay.style.opacity = "0";
+                setTimeout(() => errorOverlay.style.display = "none", 300);
+            }
+        }
+    </script>
+</body>
+
+</html>
