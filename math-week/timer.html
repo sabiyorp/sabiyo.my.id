@@ -20,7 +20,7 @@
         <div class="header">
             <img class="header-image" src="../pemilu/img/alfath-logo.png" alt="Logo Al-Fath">
             <h1>Timer Regu</h1>
-            <img class="header-image" src="../pemiluimg/osis-logo.png" alt="Logo OSIS">
+            <img class="header-image" src="../pemilu/img/osis-logo.png" alt="Logo OSIS">
         </div>
 
         <div id="candidates">
@@ -108,6 +108,21 @@
                 hintBox.style.opacity = 1;
             }, 10);
         });
+
+        function checkScreenWidth() {
+            const warningMessage = document.getElementById("warning-message");
+            const mainContent = document.getElementById("main-content");
+            if (window.innerWidth < 880) {
+                mainContent.style.display = "none";
+                warningMessage.style.display = "block";
+            } else {
+                mainContent.style.display = "block";
+                warningMessage.style.display = "none";
+            }
+        }
+
+        window.addEventListener('resize', checkScreenWidth);
+        checkScreenWidth();
 
         function startOrResumeTimer(paslon) {
             if (timers[paslon - 1] !== null) {
