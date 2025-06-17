@@ -1,0 +1,126 @@
+/* Import Open Sans font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* Global styles */
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 5%;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Main container styles */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Main heading styles */
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+/* Style for the first span in h1 (404 number) */
+h1 span:first-child {
+    color: rgb(255, 119, 0);
+    font-size: 55px;
+}
+
+/* Style for the second span in h1 (error message) */
+h1 span:last-child {
+    color: rgb(29, 152, 180);
+}
+
+/* Subheading styles (URL display) */
+h2 {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(244, 244, 244);
+    padding: 10px;
+    border-radius: 10px;
+    color: rgb(29, 152, 180);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 15px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Style for the bold text within h2 (path) */
+h2 b {
+    color: rgb(255, 119, 0);
+    display: block;
+    word-break: break-word;
+}
+
+/* Common styles for paragraphs */
+.paragraph1, .paragraph2 {
+    margin-bottom: 20px;
+}
+
+/* Specific style for the first paragraph */
+.paragraph1 {
+    text-align: justify;
+}
+
+/* Specific style for the second paragraph */
+.paragraph2 {
+    text-align: center;
+}
+
+/* Styles for links and underlined text */
+a, u {
+    text-decoration: none;
+    color: rgb(34, 0, 255);
+    transition: color 0.3s, font-weight 0.3s;
+}
+
+/* Hover styles for links and underlined text */
+a:hover, u:hover {
+    color: rgb(255, 115, 0);
+    font-weight: bold;
+}
+
+/* Styles for the "Return to Home Page" button */
+.paragraph2 a {
+    color: white;
+    padding: 15px 25px;
+    border-radius: 15px;
+    background-color: rgb(47, 165, 181);
+    box-shadow: 0 10px rgb(255, 149, 0);
+    display: inline-block;
+    font-size: 1rem;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+/* Hover styles for the "Return to Home Page" button */
+.paragraph2 a:hover {
+    background-color: rgb(29, 152, 180);
+    box-shadow: 0 10px rgb(255, 115, 0);
+    transform: translateY(2px);
+}
+
+/* Media query for screens up to 600px wide */
+@media (max-width: 600px) {
+    h1 { font-size: 2rem; }
+    .paragraph1, .paragraph2, .paragraph2 a { font-size: 0.9rem; }
+    .paragraph2 a { padding: 10px 16px; border-radius: 8px; }
+}
+
+/* Media query for screens up to 400px wide */
+@media (max-width: 400px) {
+    h1 { font-size: 1.8rem; }
+    .paragraph1, .paragraph2, .paragraph2 a { font-size: 0.8rem; }
+}
+
+/* Hide content for extremely small screens */
+@media screen and (max-width: 236px) {
+    body {
+        display: none;
+    }
+}
